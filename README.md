@@ -1,1 +1,1 @@
-# blog
+Its the project i found when clearing my computer drive. In this project i have implemented simple logic behind blog application where the user can signup, create post, follow user, and like the post of another user. I have done this project in the initial days when i was learning django. The code is litte messy but works well.
