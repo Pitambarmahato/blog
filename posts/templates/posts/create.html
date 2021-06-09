@@ -1,0 +1,15 @@
+{% extends "posts/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    {% if user.is_authenticated %}
+        <form method="post" action=''>
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="text-center">
+                <input type="submit" value="submit" class="btn btn-primary"/>
+            </div>
+        </form>
+    {% else %}
+        <h3>Please <a href='{% url "login" %}'>Login</a> to create contents.</h3>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "posts/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="card mb-2">
+        {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-lg-8">
+                    <h5 class="card-title mb-0 text-capitalize"><a href="{% url 'post_detail' post.id %}"  style="text-decoration: none">{{ post.title }}</a></h5>
+                    <span><small>Category: <a href="#" style="text-decoration: none">{{ post.category.name }}</a></small>&nbsp;&nbsp;<small>Created: {{ post.created_at.date }}</small></span>
+                </div>
+                <div class="col-lg-2 mt-2">
+                    <a href="{% url 'delete' post.id %}"><button class="btn btn-danger">Delete</button></a>
+                </div>
+                <div class="col-lg-2 mt-2">
+                    <a href="{% url 'update' post.id %}"><button class="btn btn-success">Update</button></a>
+                </div>
+            </div>
+            
+            <p class="card-text">{{ post.description }}</p>
+
+            <div class="row mb-3">
+                <div class="col-lg-2 mt-2">
+                    {% if liked %}
+                        <a class="btn btn-primary" id="btnLike" href = "{% url 'post_like' post.id %}">UnLike</a>
+                    {% elif not liked %}
+                        <a class="btn btn-primary" id="btnLike" href = "{% url 'post_like' post.id %}">Like</a>
+                    {% endif %}
+                </div>
+                <div class="col-lg-2 mt-2">
+                    <button class="btn btn-primary" id="commentBtn">Comment</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-footer">
+            <small class="text-muted">Last updated at {{ post.updated_at.date }}</small>
+        </div>
+    </div>
+    <div class="comment-widgets" id='comment_list'>
+        <!-- Comment Row -->
+        {% for comment in comments %}
+            <div class="d-flex flex-row comment-row m-t-0 mt-4">
+                <div class="p-2"><img src="https://i.imgur.com/Ur43esv.jpg" alt="user" width="50" class="rounded-circle"></div>
+                <div class="comment-text w-100">
+                    <h6 class="font-medium text-capitalize">{{ comment.user.username }}</h6> <span class="m-b-15 d-block">{{ comment.comment }}</span>
+                    <div class="comment-footer mt-2"> <span class="text-muted float-right">{{ comment.created_at.date }}</span> <button type="button" class="btn btn-primary btn-sm">Edit</button> <button type="button" class="btn btn-success btn-sm">Publish</button> <button type="button" class="btn btn-danger btn-sm">Delete</button> </div>
+                </div>
+            </div> <!-- Comment Row -->
+        {% endfor %}
+    </div>
+    <div class="bg-success p-3 rounded text-light text-center m-2" id = 'successful'>
+        <h4 id = 'success_message'></h4>
+
+    </div>
+    <div id = "comment">
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" id="cmtBtn" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    
+{% endblock %}
+
+{% block sidebar %}
+    <h4>Related Articles</h4>
+{% endblock %}
+{% block script %}
+    <script>
+        $("#comment").hide();
+        $("#successful").hide();
+        $('#cmtBtn').click(function(e){
+            e.preventDefault();
+            output = "";
+            console.log("Submit button clicked");
+            let comment = $('#id_comment').val();
+            let csrf = $('input[name=csrfmiddlewaretoken]').val();
+            console.log(comment);
+            if(comment === ""){
+                console.log("comment is empty");
+            }
+            mydata = {comment: comment, csrfmiddlewaretoken: csrf};
+            $.ajax({
+                url: {{ post.id }},
+                method: "POST",
+                data: mydata,
+                success: function(data){
+                    comment = data.comments;
+                    for(i=0; i<comment.length; i++){
+                        output += '<div class="d-flex flex-row comment-row m-t-0 mt-4">\
+                                <div class="p-2"><img src="https://i.imgur.com/Ur43esv.jpg" alt="user" width="50" class="rounded-circle"></div>\
+                                <div class="comment-text w-100">\
+                                    <h6 class="font-medium text-capitalize">'+comment[i].user.username+'</h6> <span class="m-b-15 d-block">'+comment[i].comment+'</span>\
+                                    <div class="comment-footer mt-2"> <span class="text-muted float-right">'+comment[i].created_at.date+'</span> <button type="button" class="btn btn-primary btn-sm">Edit</button> <button type="button" class="btn btn-success btn-sm">Publish</button> <button type="button" class="btn btn-danger btn-sm">Delete</button> </div>\
+                                </div>\
+                            </div>'
+                    }
+                    $('#comment_list').html(output);
+                    $('#id_comment').val("");
+                    $('#successful').show();
+                    $('#success_message').text("Comment Successfully Submitted.");
+                    console.log(data.comments);
+                },
+                error: function(data){
+                    console.log(data);
+                }
+            });
+        });
+        $("#btnLike").click(function(e){
+            e.preventDefault();
+            var href = this.href;
+            $.ajax({
+                url: href,
+                success:function(response){
+                    console.log(response);
+                    if(response['like']){
+                        $("#btnLike").html("Unlike")
+                    }else{
+                        $('#btnLike').html("Like")
+                    }
+            }
+            })
+                
+        });
+        $("#commentBtn").click(function(e){
+            e.preventDefault();
+            $("#comment").show();
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "posts/base.html" %}
+
+{% block content %}
+    {% for post in posts %} 
+        <div class="card mb-2">
+            {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+            <div class="card-body">
+                <h5 class="card-title text-capitalize"><a href="{% url 'post_detail' post.id %}" style="text-decoration: none;">{{ post.title }}</a></h5>
+                <span><small>Creator : <a href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a> &nbsp;&nbsp; Category : {{ post.category.name }} &nbsp;&nbsp; Created : {{ post.created_at.date}} &nbsp;&nbsp; |&nbsp;&nbsp; {{ post.views }} Views</small></span>
+                <span><p class="card-text">{{ post.description|safe|truncatewords:"50"|linebreaks }}</p>
+                <a href="{% url 'post_detail' post.id %}">read more</a></span>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="pagination col-lg-6 offset-lg-3">
+        <span class="step-links">
+            {% if posts.has_previous %}   
+                <a href="?page=1" class="btn btn-primary">&laquo; first</a>&nbsp;   
+                <a href="?page={{ posts.previous_page_number }}" class="btn btn-primary">previous</a>&nbsp;
+                
+            {% endif %}
+            {% if posts.has_previous or posts.has_next %}
+                <span class="current">
+                    {{ posts.number }}
+                </span>&nbsp;
+            {% endif %}
+
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}" class="btn btn-primary">next</a>&nbsp;
+                <a href="?page={{ posts.paginator.num_pages }}" class="btn btn-primary">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+{% block sidebar %}
+    <h4>Categories</h4>
+    <ul>
+        {% for category in categories %}
+            <li><a href="{% url 'category' category.id %}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

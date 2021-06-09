@@ -1,0 +1,18 @@
+{% extends "posts/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+        {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+            <form method="post" action=''>
+                {% csrf_token %}
+                {% comment %} <div class="form-group">Title: {{form.title}}</div>
+                <div class="form-group">Category: {{form.category}}</div>
+                <div class="form-group">Description: {{form.description}}</div> {% endcomment %}
+                {{ form|crispy }}
+                <input type="submit" value="submit" class="btn btn-primary"/>
+            </form>
+
+{% endblock %}
+
+{% block sidebar %}
+    <h4>Related Articles</h4>
+{% endblock %}

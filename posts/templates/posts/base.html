@@ -1,0 +1,95 @@
+{% load crispy_forms_tags %}
+{% comment %} {% load static %} {% endcomment %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Blog</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% comment %} <link rel="stylesheet" href="{% static 'css/profile.css' %}"> {% endcomment %}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://cdn.tiny.cloud/1/qvguvw74gqsmt43ohftpy6yzvu6di568p8wafug5w57jplu8/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+        {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> {% endcomment %}
+
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'index'%}">Python</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'index' %}">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About Us</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0" method='POST'>
+                        {% csrf_token %}
+                        <input class="form-control mr-sm-2" type="search" name='search' placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                    {% if user.is_authenticated %}
+                        <ul class="navbar-nav mr-auto ml-lg-3">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'logout' %}">Logout<span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'profile' user.id%}">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href='{% url "create" %}'>Create</a>
+                            </li>
+                        </ul>
+                    {% elif not user.is_authenticated %}
+                        <ul class="navbar-nav mr-auto ml-lg-3">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'login' %}">Login<span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                            </li>
+                        </ul>      
+                    {% endif %}              
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-lg-6">
+                    {% block content %} {% endblock %}
+                </div>
+                <div class="col-lg-6">
+                    {%block sidebar %}{% endblock %}
+                </div>
+            </div>
+            <!-- Footer -->
+            <footer class="page-footer font-small blue">
+
+                <!-- Copyright -->
+                <div class="footer-copyright text-center py-3">© 2021 Copyright:
+                    <a href="#"> Pitambar Mahato</a>
+                </div>
+                <!-- Copyright -->
+
+            </footer>
+            <!-- Footer -->
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> {% endcomment %}
+        {% block script %}{% endblock %}
+    </body>
+</html>
